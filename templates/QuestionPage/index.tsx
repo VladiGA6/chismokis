@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import QuestionHero from "@/components/QuestionHero";
@@ -73,6 +73,10 @@ const QuestionPage = ({ question }: Props) => {
             parentId,
         });
     };
+
+    useEffect(() => {
+        window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    }, [question.id]);
 
     return (
         <div className="flex min-h-screen flex-col bg-[#001789]">

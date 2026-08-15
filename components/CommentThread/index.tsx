@@ -108,13 +108,25 @@ const CommentThread = ({ comments, questionId, onSubmit, onReply }: Props) => {
                     className="mt-6 flex gap-3"
                 >
                     {prev && (
-                        <Link href={`/pregunta/${prev.id}`} className={pagerClass}>
+                        <Link
+                            href={`/pregunta/${prev.id}`}
+                            className={pagerClass}
+                            onClick={() =>
+                                window.scrollTo({ top: 0, left: 0, behavior: "auto" })
+                            }
+                        >
                             <span aria-hidden>←</span>
                             Anterior
                         </Link>
                     )}
                     {next && (
-                        <Link href={`/pregunta/${next.id}`} className={pagerClass}>
+                        <Link
+                            href={`/pregunta/${next.id}`}
+                            className={pagerClass}
+                            onClick={() =>
+                                window.scrollTo({ top: 0, left: 0, behavior: "auto" })
+                            }
+                        >
                             Siguiente
                             <span aria-hidden>→</span>
                         </Link>
