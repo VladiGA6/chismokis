@@ -76,27 +76,36 @@ const posts: InstagramPost[] = [
 const InstagramPhone = () => {
     const [openPostId, setOpenPostId] = useState<number | null>(null);
     const [activePostId, setActivePostId] = useState<number | null>(null);
+    const [feedReady, setFeedReady] = useState(false);
     const feedRef = useRef<HTMLDivElement>(null);
     const postRefs = useRef<Record<number, HTMLElement | null>>({});
 
+    const openPost = (id: number) => {
+        setActivePostId(id);
+        setOpenPostId(id);
+    };
+
+    const closeFeed = () => {
+        setOpenPostId(null);
+        setActivePostId(null);
+    };
+
+    const setFeedNode = (node: HTMLDivElement | null) => {
+        feedRef.current = node;
+        setFeedReady(Boolean(node));
+    };
+
     useLayoutEffect(() => {
-        if (openPostId == null) return;
+        if (!feedReady || openPostId == null) return;
         const container = feedRef.current;
         const target = postRefs.current[openPostId];
         if (!container || !target) return;
-        container.scrollTop =
-            target.getBoundingClientRect().top -
-            container.getBoundingClientRect().top +
-            container.scrollTop;
+        container.scrollTop = target.offsetTop;
         setActivePostId(openPostId);
-    }, [openPostId]);
+    }, [feedReady, openPostId]);
 
     useEffect(() => {
-        if (openPostId == null) {
-            setActivePostId(null);
-            return;
-        }
-
+        if (!feedReady || openPostId == null) return;
         const root = feedRef.current;
         if (!root) return;
 
@@ -111,7 +120,7 @@ const InstagramPhone = () => {
                     bestId = id;
                 }
             }
-            if (bestRatio >= 0.45) {
+            if (bestRatio >= 0.35) {
                 setActivePostId(bestId);
             }
         };
@@ -119,29 +128,25 @@ const InstagramPhone = () => {
         const observer = new IntersectionObserver(
             (entries) => {
                 for (const entry of entries) {
-                    const id = Number(
-                        (entry.target as HTMLElement).dataset.postId,
-                    );
+                    const id = Number((entry.target as HTMLElement).dataset.postId);
                     if (!Number.isFinite(id)) continue;
-                    ratios.set(id, entry.isIntersecting ? entry.intersectionRatio : 0);
+                    ratios.set(id, entry.intersectionRatio);
                 }
                 pickActive();
             },
             {
                 root,
-                threshold: [0, 0.25, 0.45, 0.6, 0.75, 1],
+                threshold: [0, 0.2, 0.35, 0.5, 0.65, 0.8, 1],
             },
         );
 
         for (const post of posts) {
             const node = postRefs.current[post.id];
-            if (!node) continue;
-            node.dataset.postId = String(post.id);
-            observer.observe(node);
+            if (node) observer.observe(node);
         }
 
         return () => observer.disconnect();
-    }, [openPostId]);
+    }, [feedReady, openPostId]);
 
     return (
         <motion.figure
@@ -185,7 +190,7 @@ const InstagramPhone = () => {
                                 exit={{ opacity: 0, x: -16 }}
                                 transition={{ duration: 0.28, ease: easeOutSoft }}
                             >
-                                <ProfileGrid onOpenPost={setOpenPostId} />
+                                <ProfileGrid onOpenPost={openPost} />
                             </motion.div>
                         ) : (
                             <motion.div
@@ -199,7 +204,7 @@ const InstagramPhone = () => {
                                 <div className="flex h-11 shrink-0 items-center border-b border-white/10 px-2">
                                     <button
                                         type="button"
-                                        onClick={() => setOpenPostId(null)}
+                                        onClick={closeFeed}
                                         className="flex size-10 items-center justify-center text-white"
                                         aria-label="Volver al perfil"
                                     >
@@ -215,12 +220,13 @@ const InstagramPhone = () => {
                                     </div>
                                 </div>
                                 <div
-                                    ref={feedRef}
+                                    ref={setFeedNode}
                                     className="min-h-0 flex-1 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
                                 >
                                     {posts.map((post) => (
                                         <article
                                             key={post.id}
+                                            data-post-id={post.id}
                                             ref={(node) => {
                                                 postRefs.current[post.id] = node;
                                             }}
@@ -229,7 +235,7 @@ const InstagramPhone = () => {
                                             <PostDetail
                                                 post={post}
                                                 active={activePostId === post.id}
-                                                onBack={() => setOpenPostId(null)}
+                                                onBack={closeFeed}
                                             />
                                         </article>
                                     ))}
@@ -245,7 +251,7 @@ const InstagramPhone = () => {
                             <button
                                 type="button"
                                 className="flex justify-center"
-                                onClick={() => setOpenPostId(null)}
+                                onClick={closeFeed}
                                 aria-label="Inicio"
                             >
                                 <HomeIcon />
@@ -262,7 +268,7 @@ const InstagramPhone = () => {
                             <button
                                 type="button"
                                 className="flex justify-center"
-                                onClick={() => setOpenPostId(null)}
+                                onClick={closeFeed}
                                 aria-label="Perfil"
                             >
                                 <span className="size-[22px] overflow-hidden rounded-full ring-1 ring-white">
@@ -485,22 +491,38 @@ const PostMedia = ({
         const video = videoRef.current;
         if (!video || !post.video) return;
 
+        let cancelled = false;
+        video.loop = true;
         video.muted = muted;
         video.volume = 1;
 
+        const tryPlay = () => {
+            if (cancelled || !autoPlay) return;
+            void video.play().catch(() => {
+                if (cancelled || muted) return;
+                video.muted = true;
+                onAutoplayBlocked?.();
+                void video.play().catch(() => undefined);
+            });
+        };
+
         if (!autoPlay) {
             video.pause();
-            video.currentTime = 0;
             return;
         }
 
-        void video.play().catch(() => {
-            if (!muted) {
-                video.muted = true;
-                onAutoplayBlocked?.();
-                void video.play();
-            }
-        });
+        if (video.readyState >= 2) {
+            tryPlay();
+        } else {
+            video.addEventListener("loadeddata", tryPlay);
+            video.addEventListener("canplay", tryPlay);
+        }
+
+        return () => {
+            cancelled = true;
+            video.removeEventListener("loadeddata", tryPlay);
+            video.removeEventListener("canplay", tryPlay);
+        };
     }, [autoPlay, muted, onAutoplayBlocked, post.video]);
 
     if (post.video) {
@@ -514,11 +536,6 @@ const PostMedia = ({
                 playsInline
                 autoPlay={autoPlay}
                 preload="auto"
-                onLoadedData={(event) => {
-                    if (!autoPlay) {
-                        event.currentTarget.currentTime = 0.01;
-                    }
-                }}
                 aria-label={`Video del post ${post.id}`}
             />
         );
