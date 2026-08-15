@@ -4,19 +4,42 @@ import { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { passionOne } from "@/app/fonts";
+import AnonymousAvatar from "@/components/AnonymousAvatar";
 import ChokisButton from "@/components/ChokisButton";
 import { easeOutSoft, fadeUp, viewportOnce } from "@/lib/motion";
 
 const rows = [
-    { id: "w1", bars: ["w-[38%]", "w-[92%]", "w-[74%]"], likes: 24 },
-    { id: "w2", bars: ["w-[46%]", "w-[88%]", "w-[61%]"], likes: 16 },
-    { id: "w3", bars: ["w-[32%]", "w-[95%]", "w-[70%]"], likes: 9 },
+    { id: "w1", seed: 11, bars: ["w-[38%]", "w-[92%]", "w-[74%]"], likes: 24 },
+    { id: "w2", seed: 28, bars: ["w-[46%]", "w-[88%]", "w-[61%]"], likes: 16 },
+    { id: "w3", seed: 47, bars: ["w-[32%]", "w-[95%]", "w-[70%]"], likes: 9 },
 ];
 
+const BubbleTail = () => (
+    <>
+        <svg
+            className="absolute top-5 -left-[18px] h-[28px] w-[19px] overflow-visible"
+            viewBox="0 0 19 28"
+            aria-hidden
+        >
+            <path
+                d="M18.5 2.5 1.5 24 18.5 13.5"
+                fill="#FCFCFC"
+                stroke="#121212"
+                strokeWidth="3"
+                strokeLinejoin="round"
+                strokeLinecap="round"
+            />
+        </svg>
+        <span className="absolute top-6 left-0 h-4 w-1.5 -translate-x-[2px] bg-[#FCFCFC]" />
+    </>
+);
+
 const WireRow = ({
+    seed,
     bars,
     likes,
 }: {
+    seed: number;
     bars: string[];
     likes: number;
 }) => {
@@ -25,22 +48,25 @@ const WireRow = ({
     const [flash, setFlash] = useState(false);
 
     return (
-        <motion.div
-            className="flex flex-1 gap-3 border-b border-[#ECECEC] p-4 last:border-b-0"
-            animate={
-                flash
-                    ? { backgroundColor: ["#FCFCFC", "#FFF4E8", "#FCFCFC"] }
-                    : { backgroundColor: "#FCFCFC" }
-            }
-            transition={{ duration: 0.7, ease: "easeOut" }}
-            onAnimationComplete={() => setFlash(false)}
-        >
-            <div className="size-8 shrink-0 rounded-full bg-[#E2E2E2]" />
-            <div className="flex min-w-0 grow flex-col justify-center">
-                <div className={`h-2 rounded-full bg-[#E2E2E2] ${bars[0]}`} />
+        <div className="flex items-start gap-2.5">
+            <div className="mt-3 shrink-0 overflow-hidden rounded-full border-[2.5px] border-[#121212] shadow-[2px_2px_0_#121212]">
+                <AnonymousAvatar seed={seed} size={36} />
+            </div>
+            <motion.div
+                className="relative min-w-0 grow rounded-[1.45rem] border-[3px] border-[#121212] px-3.5 py-3 shadow-[4px_4px_0_#121212]"
+                animate={
+                    flash
+                        ? { backgroundColor: ["#FCFCFC", "#FFF4E8", "#FCFCFC"] }
+                        : { backgroundColor: "#FCFCFC" }
+                }
+                transition={{ duration: 0.7, ease: "easeOut" }}
+                onAnimationComplete={() => setFlash(false)}
+            >
+                <BubbleTail />
+                <div className={`h-2.5 rounded-full bg-[#E2E2E2] ${bars[0]}`} />
                 <div className={`mt-2 h-2 rounded-full bg-[#E8E8E8] ${bars[1]}`} />
                 <div className={`mt-1.5 h-2 rounded-full bg-[#E8E8E8] ${bars[2]}`} />
-                <div className="mt-2">
+                <div className="mt-2.5">
                     <ChokisButton
                         count={count}
                         pressed={pressed}
@@ -51,8 +77,8 @@ const WireRow = ({
                         }}
                     />
                 </div>
-            </div>
-        </motion.div>
+            </motion.div>
+        </div>
     );
 };
 
@@ -82,7 +108,7 @@ const PrizeSection = () => {
 
                 <div className="relative mx-auto w-full max-w-[28rem] overflow-visible md:ml-auto md:mr-0">
                     <motion.div
-                        className="flex aspect-square flex-col overflow-hidden rounded-2xl border border-[#ECECEC] bg-[#FCFCFC] shadow-[0px_18px_24px_-20px_rgba(0,0,0,0.13),0px_2px_0px_0px_#FFF_inset,0px_8px_16px_-12px_rgba(0,0,0,0.08)]"
+                        className="flex flex-col gap-3 pr-1 pb-1"
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={viewportOnce}
@@ -91,6 +117,7 @@ const PrizeSection = () => {
                         {rows.map((row) => (
                             <WireRow
                                 key={row.id}
+                                seed={row.seed}
                                 bars={row.bars}
                                 likes={row.likes}
                             />

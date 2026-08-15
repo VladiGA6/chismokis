@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { passionOne } from "@/app/fonts";
 import { archiveQuestions } from "@/lib/data";
 import QuestionRevealCard from "@/components/QuestionRevealCard";
-import { easeOutSoft, fadeUp, stagger, viewportOnce } from "@/lib/motion";
+import { easeOutSoft, fadeUp, viewportOnce } from "@/lib/motion";
 
 const QuestionMasonry = () => {
     return (
@@ -24,23 +24,20 @@ const QuestionMasonry = () => {
                 </h2>
             </motion.div>
 
-            <motion.div
-                className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3"
-                initial="hidden"
-                whileInView="visible"
-                viewport={viewportOnce}
-                variants={stagger}
-            >
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
                 {archiveQuestions.map((item) => (
                     <motion.div
                         key={item.id}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={viewportOnce}
                         variants={fadeUp}
                         transition={{ duration: 0.45, ease: easeOutSoft }}
                     >
                         <QuestionRevealCard id={item.id} title={item.title} />
                     </motion.div>
                 ))}
-            </motion.div>
+            </div>
         </section>
     );
 };

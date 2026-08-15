@@ -197,9 +197,14 @@ body {
     position: fixed;
     z-index: 40;
     right: max(1rem, env(safe-area-inset-right));
-    bottom: calc(10.5rem + env(safe-area-inset-bottom));
+    bottom: max(1rem, env(safe-area-inset-bottom));
     left: max(1rem, env(safe-area-inset-left));
     pointer-events: none;
+    transition: bottom 0.3s cubic-bezier(0.22, 0.8, 0.28, 1);
+}
+
+html[data-sticky-comment] .cookie-banner {
+    bottom: calc(10.5rem + env(safe-area-inset-bottom));
 }
 
 .cookie-card {
@@ -238,7 +243,8 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .nav-track {
+    .nav-track,
+    .cookie-banner {
         transition: none;
     }
 }

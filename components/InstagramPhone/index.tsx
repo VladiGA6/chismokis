@@ -1,26 +1,76 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { passionOne } from "@/app/fonts";
-import CookieMark from "@/components/CookieMark";
 import { easeOutSoft } from "@/lib/motion";
 
-const highlights = [
-    { label: "#CelebraTuC...", tone: "bg-[#c0122a]", title: "CELEBRA TU CHISPA" },
-    { label: "Detona Sonri...", tone: "bg-[#6b2d8b]", title: "DETONA SONRISAS" },
-    { label: "Tu turno", tone: "bg-[#3a2414]", title: "cookie" },
-    { label: "Merry Chispa...", tone: "bg-[#1a4fcc]", title: "DETONA LA CHISPA" },
-];
+type InstagramPost = {
+    id: number;
+    likes: string;
+    comments: number;
+    time: string;
+    caption: string;
+    video?: string;
+    image?: string;
+    collabWith?: string;
+};
 
-const posts = [
-    { id: 1, likes: "2,184", comments: 48, time: "2 h", caption: "Saborea el momento 💙🍪" },
-    { id: 2, likes: "1,672", comments: 31, time: "1 d", caption: "La chispa de hoy ✨" },
-    { id: 3, likes: "3,041", comments: 86, time: "2 d", caption: "¿Ya destapaste el paquete?" },
-    { id: 4, likes: "984", comments: 19, time: "4 d", caption: "Detona sonrisas" },
-    { id: 5, likes: "2,510", comments: 54, time: "1 sem", caption: "Tu turno 🍪" },
-    { id: 6, likes: "1,208", comments: 27, time: "2 sem", caption: "Merry Chispa" },
+const posts: InstagramPost[] = [
+    {
+        id: 1,
+        likes: "2,184",
+        comments: 48,
+        time: "2 h",
+        caption:
+            "Así nace un Chismokis 🍪 Se entrega la galleta, aparece la pregunta y el chisme queda suelto: ¿Cuál es la mentira más grande que le dijiste a tus papás?",
+        video: "/assets/chismokis-v1.mp4",
+    },
+    {
+        id: 2,
+        likes: "1,672",
+        comments: 31,
+        time: "1 d",
+        caption:
+            "(Ejemplo de collab) @beligzl 👀 Nos cuenta cómo se enteró que su ligue tenía novia. El chisme completo, sin filtro. #chismokis #saboreatumomento #chokis #galletas",
+        video: "/assets/chismokis-mi-ligue-tenia-novia.mp4",
+        collabWith: "beligzl",
+    },
+    {
+        id: 3,
+        likes: "3,041",
+        comments: 86,
+        time: "2 d",
+        caption:
+            "Elige tu chisme 🎮 A) Mi ex  B) Mi mejor amigo  C) La oficina  D) Mi familia  E) Universidad. ¿Cuál desbloqueas primero?",
+        image: "/assets/chismokis_v3.webp",
+    },
+    {
+        id: 4,
+        likes: "984",
+        comments: 19,
+        time: "4 d",
+        caption:
+            "Dos amigas, un paquete de Chokis y la tarjeta escondida 🍪 El chisme ya salió del empaque.",
+        video: "/assets/chismokis_video.mp4",
+    },
+    {
+        id: 5,
+        likes: "2,510",
+        comments: 54,
+        time: "1 sem",
+        caption: "Pasa la Chokis, pasa el Chismokis 🍪 El chisme no se guarda: se comparte.",
+        image: "/assets/chismokis_v6.webp",
+    },
+    {
+        id: 6,
+        likes: "1,208",
+        comments: 27,
+        time: "2 sem",
+        caption:
+            "Con Chokis en la mano y el chisme suelto 👀 Me enteré que mi novio todavía hablaba con su ex.",
+        video: "/assets/chismokis_v5.mp4",
+    },
 ];
 
 const InstagramPhone = () => {
@@ -41,7 +91,7 @@ const InstagramPhone = () => {
 
     return (
         <motion.figure
-            className="mx-auto w-[min(92vw,24rem)]"
+            className="mx-auto w-[min(92vw,24rem)] shrink-0"
             initial={{ opacity: 0, y: 20, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.55, ease: easeOutSoft }}
@@ -57,7 +107,7 @@ const InstagramPhone = () => {
                 <span className="absolute top-48 -left-[3px] h-10 w-[3px] rounded-l-sm bg-[#2a2a2e]" />
                 <span className="absolute top-40 -right-[3px] h-14 w-[3px] rounded-r-sm bg-[#2a2a2e]" />
 
-                <div className="relative flex h-[min(72svh,44rem)] flex-col overflow-hidden rounded-[2.45rem] bg-black">
+                <div className="relative flex aspect-[9/17.5] w-full flex-col overflow-hidden rounded-[2.45rem] bg-black">
                     <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex h-11 items-start justify-center pt-[11px]">
                         <div className="absolute left-6 top-[14px] text-[12px] font-semibold tracking-tight text-white">
                             8:29
@@ -124,6 +174,7 @@ const InstagramPhone = () => {
                                         >
                                             <PostDetail
                                                 post={post}
+                                                active={openPostId === post.id}
                                                 onBack={() => setOpenPostId(null)}
                                             />
                                         </article>
@@ -230,35 +281,7 @@ const ProfileGrid = ({ onOpenPost }: { onOpenPost: (id: number) => void }) => (
             </div>
         </header>
 
-        <ul className="mt-4 flex gap-3.5 overflow-x-auto px-3.5 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {highlights.map((item) => (
-                <li
-                    key={item.label}
-                    className="flex w-[4.15rem] shrink-0 flex-col items-center gap-1"
-                >
-                    <div className="flex size-[4.15rem] items-center justify-center rounded-full border border-[#3a3a3a] p-[2px]">
-                        <div
-                            className={`flex size-full items-center justify-center overflow-hidden rounded-full ${item.tone}`}
-                        >
-                            {item.title === "cookie" ? (
-                                <CookieMark className="w-10" />
-                            ) : (
-                                <span
-                                    className={`${passionOne.className} px-1 text-center text-[7px] leading-[1.05] text-white/90 uppercase`}
-                                >
-                                    {item.title}
-                                </span>
-                            )}
-                        </div>
-                    </div>
-                    <span className="w-full truncate text-center text-[10px] text-white">
-                        {item.label}
-                    </span>
-                </li>
-            ))}
-        </ul>
-
-        <div className="mt-2 flex border-b border-white/10">
+        <div className="mt-3 flex border-b border-white/10">
             <span className="flex h-10 flex-1 items-center justify-center border-b-[1.5px] border-white text-white">
                 <GridIcon />
             </span>
@@ -271,81 +294,195 @@ const ProfileGrid = ({ onOpenPost }: { onOpenPost: (id: number) => void }) => (
         </div>
 
         <div className="grid grid-cols-3 gap-[1.5px] bg-black">
-            {posts.map((post) => (
-                <button
-                    key={post.id}
-                    type="button"
-                    onClick={() => onOpenPost(post.id)}
-                    className="relative aspect-[4/5] bg-[#3d3d3d] text-left"
-                    aria-label={`Abrir post ${post.id}`}
-                >
-                    <PostWireframe n={post.id} />
-                </button>
-            ))}
+            {posts.map((post) => {
+                const loopInGrid = post.video === "/assets/chismokis-v1.mp4";
+                return (
+                    <button
+                        key={post.id}
+                        type="button"
+                        onClick={() => onOpenPost(post.id)}
+                        className="relative aspect-[4/5] bg-[#3d3d3d] text-left"
+                        aria-label={`Abrir post ${post.id}`}
+                    >
+                        <PostMedia post={post} autoPlay={loopInGrid} muted />
+                        {post.video ? (
+                            <span className="absolute top-1.5 right-1.5 text-white drop-shadow">
+                                <ClipIcon />
+                            </span>
+                        ) : null}
+                    </button>
+                );
+            })}
         </div>
     </>
 );
 
 const PostDetail = ({
     post,
+    active,
     onBack,
 }: {
-    post: (typeof posts)[number];
+    post: InstagramPost;
+    active: boolean;
     onBack: () => void;
-}) => (
-    <div>
-        <div className="flex items-center gap-2.5 px-3 py-2">
-            <button
-                type="button"
-                onClick={onBack}
-                className="shrink-0"
-                aria-label="Volver al perfil"
-            >
-                <ChokisAvatar className="size-8" />
-            </button>
-            <button
-                type="button"
-                onClick={onBack}
-                className="min-w-0 flex-1 text-left"
-            >
-                <p className="flex items-center gap-1 text-[13px] font-semibold text-white">
-                    chokis_mx
-                    <VerifiedBadge />
-                </p>
-            </button>
-            <span className="text-white/80" aria-hidden>
-                ···
-            </span>
-        </div>
+}) => {
+    const [muted, setMuted] = useState(false);
+    const onAutoplayBlocked = useCallback(() => setMuted(true), []);
 
-        <div className="relative aspect-[4/5] bg-[#3d3d3d]">
-            <PostWireframe n={post.id} />
-        </div>
-
-        <div className="flex items-center px-2.5 pt-2 text-white">
-            <div className="flex items-center gap-3.5">
-                <HeartIcon />
-                <CommentIcon />
-                <ShareIcon />
+    return (
+        <div>
+            <div className="flex items-center gap-2.5 px-3 py-2">
+                <button
+                    type="button"
+                    onClick={onBack}
+                    className="shrink-0"
+                    aria-label="Volver al perfil"
+                >
+                    <ChokisAvatar className="size-8" />
+                </button>
+                <button
+                    type="button"
+                    onClick={onBack}
+                    className="min-w-0 flex-1 text-left"
+                >
+                    {post.collabWith ? (
+                        <p className="flex flex-wrap items-center gap-x-1 text-[13px] font-semibold text-white">
+                            <span className="inline-flex items-center gap-1">
+                                chokis_mx
+                                <VerifiedBadge />
+                            </span>
+                            <span className="text-white/55">&</span>
+                            <span>{post.collabWith}</span>
+                        </p>
+                    ) : (
+                        <p className="flex items-center gap-1 text-[13px] font-semibold text-white">
+                            chokis_mx
+                            <VerifiedBadge />
+                        </p>
+                    )}
+                </button>
+                <span className="text-white/80" aria-hidden>
+                    ···
+                </span>
             </div>
-            <span className="ml-auto">
-                <SaveIcon />
-            </span>
-        </div>
 
-        <div className="px-3 pt-2 pb-3 text-[13px] text-white">
-            <p className="font-semibold">{post.likes} likes</p>
-            <p className="mt-1 leading-snug">
-                <span className="font-semibold">chokis_mx</span>{" "}
-                <span className="text-white/90">{post.caption}</span>
-            </p>
-            <p className="mt-1 text-white/45">View all {post.comments} comments</p>
-            <p className="mt-1 text-[11px] tracking-wide text-white/40 uppercase">
-                {post.time}
-            </p>
+            <div className="relative aspect-[4/5] bg-[#3d3d3d]">
+                <PostMedia
+                    post={post}
+                    autoPlay={active}
+                    muted={muted}
+                    onAutoplayBlocked={onAutoplayBlocked}
+                />
+                {post.video ? (
+                    <button
+                        type="button"
+                        onClick={() => setMuted((current) => !current)}
+                        className="absolute inset-0 z-[1]"
+                        aria-label={muted ? "Activar audio" : "Silenciar audio"}
+                    />
+                ) : null}
+                {post.video ? (
+                    <span className="pointer-events-none absolute right-2.5 bottom-2.5 z-[2] flex size-8 items-center justify-center rounded-full bg-black/55 text-white">
+                        {muted ? <MuteIcon /> : <UnmuteIcon />}
+                    </span>
+                ) : null}
+            </div>
+
+            <div className="flex items-center px-2.5 pt-2 text-white">
+                <div className="flex items-center gap-3.5">
+                    <HeartIcon />
+                    <CommentIcon />
+                    <ShareIcon />
+                </div>
+                <span className="ml-auto">
+                    <SaveIcon />
+                </span>
+            </div>
+
+            <div className="px-3 pt-2 pb-3 text-[13px] text-white">
+                <p className="font-semibold">{post.likes} likes</p>
+                <p className="mt-1 leading-snug">
+                    <span className="font-semibold">chokis_mx</span>{" "}
+                    <span className="text-white/90">{post.caption}</span>
+                </p>
+                <p className="mt-1 text-white/45">View all {post.comments} comments</p>
+                <p className="mt-1 text-[11px] tracking-wide text-white/40 uppercase">
+                    {post.time}
+                </p>
+            </div>
         </div>
-    </div>
-);
+    );
+};
+
+const PostMedia = ({
+    post,
+    autoPlay,
+    muted,
+    onAutoplayBlocked,
+}: {
+    post: InstagramPost;
+    autoPlay: boolean;
+    muted: boolean;
+    onAutoplayBlocked?: () => void;
+}) => {
+    const videoRef = useRef<HTMLVideoElement>(null);
+
+    useEffect(() => {
+        const video = videoRef.current;
+        if (!video || !post.video) return;
+
+        video.muted = muted;
+        video.volume = 1;
+
+        if (!autoPlay) {
+            video.pause();
+            return;
+        }
+
+        void video.play().catch(() => {
+            if (!muted) {
+                video.muted = true;
+                onAutoplayBlocked?.();
+                void video.play();
+            }
+        });
+    }, [autoPlay, muted, onAutoplayBlocked, post.video]);
+
+    if (post.video) {
+        return (
+            <video
+                ref={videoRef}
+                className="absolute inset-0 h-full w-full object-cover"
+                src={post.video}
+                muted={muted}
+                loop
+                playsInline
+                autoPlay={autoPlay}
+                preload={autoPlay ? "auto" : "metadata"}
+                onLoadedData={(event) => {
+                    if (!autoPlay) {
+                        event.currentTarget.currentTime = 0.01;
+                    }
+                }}
+                aria-label={`Video del post ${post.id}`}
+            />
+        );
+    }
+
+    if (post.image) {
+        return (
+            <Image
+                src={post.image}
+                alt=""
+                fill
+                className="object-cover"
+                sizes="(max-width: 420px) 90vw, 360px"
+            />
+        );
+    }
+
+    return <PostWireframe n={post.id} />;
+};
 
 const PostWireframe = ({ n }: { n: number }) => (
     <>
@@ -356,6 +493,46 @@ const PostWireframe = ({ n }: { n: number }) => (
             <span className="text-[9px] text-white/25">Post {n}</span>
         </div>
     </>
+);
+
+const ClipIcon = () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+        <path d="M4 6.5h11.5a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8.5a2 2 0 0 1 2-2Zm15.2 1.3 3.3-1.9v12.2l-3.3-1.9V7.8Z" />
+    </svg>
+);
+
+const MuteIcon = () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+        <path
+            d="M11 5 6.5 9H3v6h3.5L11 19V5Z"
+            stroke="currentColor"
+            strokeWidth="1.7"
+            strokeLinejoin="round"
+        />
+        <path
+            d="m16 9.5 5 5M21 9.5l-5 5"
+            stroke="currentColor"
+            strokeWidth="1.7"
+            strokeLinecap="round"
+        />
+    </svg>
+);
+
+const UnmuteIcon = () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+        <path
+            d="M11 5 6.5 9H3v6h3.5L11 19V5Z"
+            stroke="currentColor"
+            strokeWidth="1.7"
+            strokeLinejoin="round"
+        />
+        <path
+            d="M15.2 9.2a4.2 4.2 0 0 1 0 5.6M17.8 6.6a7.5 7.5 0 0 1 0 10.8"
+            stroke="currentColor"
+            strokeWidth="1.7"
+            strokeLinecap="round"
+        />
+    </svg>
 );
 
 const ChokisAvatar = ({ className }: { className?: string }) => (

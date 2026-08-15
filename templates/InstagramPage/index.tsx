@@ -19,7 +19,7 @@ const InstagramPage = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.4, delay: 0.28, ease: easeOutSoft }}
                     >
-                        Perfil de Instagram — chokis_mx
+                        Perfil de Instagram - chokis_mx
                     </motion.p>
                 </main>
             </div>

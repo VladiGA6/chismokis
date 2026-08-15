@@ -3,7 +3,7 @@ import LegalPage from "@/templates/LegalPage";
 import { termsDoc } from "@/lib/legal";
 
 export const metadata: Metadata = {
-    title: "Términos y condiciones — Chismokis",
+    title: "Términos y condiciones • Chismokis",
     description:
         "Términos de uso y descargos de responsabilidad de Gamesa aplicables a Chismokis.",
 };

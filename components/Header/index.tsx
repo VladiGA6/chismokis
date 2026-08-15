@@ -40,34 +40,38 @@ const Header = () => {
                         />
                     </Link>
                 </motion.div>
-                <motion.button
-                    type="button"
+                <motion.div
                     whileTap={{ scale: 0.9 }}
-                    className="absolute right-0 top-5 flex size-10 items-center justify-center"
-                    aria-label="Notificaciones"
+                    className="absolute right-0 top-5"
                 >
-                    <svg
-                        width="22"
-                        height="22"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        aria-hidden
+                    <Link
+                        href="/perfil"
+                        className="flex size-10 items-center justify-center"
+                        aria-label="Perfil"
                     >
-                        <path
-                            d="M12 3.5c-3.4 0-5.5 2.4-5.5 5.6v2.2c0 .7-.4 1.7-1.1 2.3l-.4.3c-.6.5-.3 1.6.5 1.6h13c.8 0 1.1-1.1.5-1.6l-.4-.3c-.7-.6-1.1-1.6-1.1-2.3V9.1c0-3.2-2.1-5.6-5.5-5.6Z"
-                            stroke="white"
-                            strokeWidth="1.8"
-                            strokeLinejoin="round"
-                        />
-                        <path
-                            d="M9.8 18.2a2.4 2.4 0 0 0 4.4 0"
-                            stroke="white"
-                            strokeWidth="1.8"
-                            strokeLinecap="round"
-                        />
-                    </svg>
-                    <span className="absolute right-2 top-2 size-2 rounded-full bg-[#E31B23]" />
-                </motion.button>
+                        <svg
+                            width="22"
+                            height="22"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            aria-hidden
+                        >
+                            <circle
+                                cx="12"
+                                cy="8.2"
+                                r="3.3"
+                                stroke="white"
+                                strokeWidth="1.8"
+                            />
+                            <path
+                                d="M5.2 18.8c.9-3.3 3.3-5.1 6.8-5.1s5.9 1.8 6.8 5.1"
+                                stroke="white"
+                                strokeWidth="1.8"
+                                strokeLinecap="round"
+                            />
+                        </svg>
+                    </Link>
+                </motion.div>
             </header>
             <FullMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
         </>

@@ -10,7 +10,7 @@ export const duration = {
 } as const;
 
 export const fadeUp: Variants = {
-    hidden: { opacity: 0, y: 18 },
+    hidden: { opacity: 0, y: 12 },
     visible: { opacity: 1, y: 0 },
 };
 
@@ -44,9 +44,11 @@ export const staggerFast: Variants = {
     },
 };
 
+/** Dispara en cuanto entra un píxel; margen inferior anticipa la animación al acercarse al borde. */
 export const viewportOnce = {
     once: true,
-    amount: 0.2,
+    amount: 0,
+    margin: "0px 0px 120px 0px",
 } as const;
 
 export const springPop: Transition = {

@@ -14,8 +14,9 @@ type Item = {
 const items: Item[] = [
     { label: "Inicio", href: "/" },
     { label: "Pregunta", href: "/pregunta" },
+    { label: "Perfil", href: "/perfil" },
     { label: "Tarjeta", href: "/tarjeta" },
-    { label: "Instagram", href: "/instagram" },
+    { label: "Piezas", href: "/piezas" },
 ];
 
 type Props = {

@@ -99,12 +99,24 @@ export const archiveQuestions: ArchiveQuestion[] = [
 export const getQuestionById = (id: string) =>
     archiveQuestions.find((item) => item.id === id);
 
+export const getAdjacentQuestions = (id: string) => {
+    const index = archiveQuestions.findIndex((item) => item.id === id);
+    if (index < 0) return { prev: null, next: null };
+
+    const last = archiveQuestions.length - 1;
+    return {
+        prev: archiveQuestions[index === 0 ? last : index - 1],
+        next: archiveQuestions[index === last ? 0 : index + 1],
+    };
+};
+
 export const defaultQuestion = archiveQuestions[0];
 
 export const passCard = {
     tag: question.tag,
     prompt: "Responde:",
     question: question.title,
+    qrUrl: "https://chismokis.com/pregunta",
     scanHeadline: "Si alguien escanea esto, el chisme ya salió del paquete.",
     legal: "Promoción no relacionada con el producto alimenticio. Consulta Términos y Condiciones y Aviso de Privacidad en chismokis.com/legal. Vigencia y mecánica en el sitio. Prohibida su venta. Marcas de Gamesa® / Chokis® usadas bajo autorización.",
 };
@@ -145,7 +157,7 @@ export const initialComments: CommentItem[] = [
         handle: "cookie_not_found_404_184729",
         time: "2m",
         content:
-            "Llegó 40 minutos tarde, pidió el menú más caro, se tomó dos copas y al final me soltó que “solo quería ser amigos… pero si me quedaba a dormir no se iba a quejar”. Yo pagué. Lo dejé en la cuenta. Nunca más.",
+            "Llegó 40 minutos tarde, pidió el menú más caro, se tomó dos copas y al final me soltó que “solo quería ser amigos… pero si me quedaba a dormir no se iba a quejar”. Yo pagué y lo dejé en la cuenta, aprendí mi lección jssjsjs.",
         likes: 342,
         replies: [
             {
@@ -154,7 +166,7 @@ export const initialComments: CommentItem[] = [
                 handle: "cookie_not_found_404_551203",
                 time: "1m",
                 content:
-                    "El “si te quedas no me quejo” es el red flag con moño. Yo también pagué. Nunca más es poco.",
+                    "El “si te quedas no me quejo” es el red flag con moño, alguna vez también pagué y ya no volví z.",
                 likes: 88,
             },
             {
@@ -173,7 +185,7 @@ export const initialComments: CommentItem[] = [
         handle: "cookie_not_found_404_392847",
         time: "11m",
         content:
-            "Me llevó al mismo restaurante donde yo había ido con mi ex. Y se lo dijo al mesero. En voz alta. El mesero me reconoció y preguntó que si “el otro chico ya no venía”. Quise que me tragara la mesa.",
+            "Quedamos en vernos en una cafetería un sábado por la tarde, cuando llegué a la mesa que me indicó por mensaje, no estaba solo. Había llevado a su mamá, a su tía y a su hermana menor para que según él “me evaluarán”, pasé la siguiente hora en lo que parecía una entrevista de trabajo encubierta donde su mamá me interrogó sobre mi historial crediticio, si sabía cocinar y cuáles eran mis planes de maternidad, obviamente huí al baño y me fui por la puerta trasera..",
         likes: 218,
     },
     {
@@ -182,7 +194,7 @@ export const initialComments: CommentItem[] = [
         handle: "cookie_not_found_404_501638",
         time: "28m",
         content:
-            "Pasó toda la cena contestando mensajes. Al final era su mamá… coordinando la siguiente cita. Con otra. Me mostró el chat “para que no pensara mal”. Pensé peor.",
+            "Pasó por mí en su auto, pero no iba solo en el auto, estaba tpda su familia y todos vestían de negro, eso me sacó mucho de onda porque resultó que la 'cita' era para acompañarlo al funeral de su tío abuelo porque no quería ir solo y pensó que era una buena oportunidad para que conociera a toda su familia extendida de una vez, no supe como salir de ahí y terminé sirviendo café a personas llorando que no conocía..",
         likes: 501,
     },
     {
@@ -191,7 +203,7 @@ export const initialComments: CommentItem[] = [
         handle: "cookie_not_found_404_267194",
         time: "1h",
         content:
-            "Se presentó con otro nombre. Googleé el que venía en la reserva. Tenía novia, un perro en común y fotos de vacaciones de hace dos semanas. Pedí el postre para llevar y me fui. El postre estuvo mejor que él.",
+            "Fuimos al cine a ver una película de terror pero cuando llegamos a la sala estaba completamente vacía, así que pensé que sería divertido, tendríamos un poco más de privacidad, no contaba con que el tipo se la pasaría toda la maldita película gritándole a la pantalla cómo él sobreviviría mejor que los personajes, explicando por qué las decisiones del director eran estúpidas y haciendo ruidos de 'pfft' cada 5 minutos. Al final, se enojó conmigo porque no le di la razón cuando dijo que él podría haber dirigido la película con los ojos cerrados, claramente nunca más le hablé",
         likes: 167,
     },
     {
@@ -200,7 +212,7 @@ export const initialComments: CommentItem[] = [
         handle: "cookie_not_found_404_748203",
         time: "1h",
         content:
-            "A la tercera copa me confesó que seguía viviendo con su ex “por la renta”. A la cuarta, que dormían en la misma cama “pero cada quien de su lado”. A la quinta me invitó a su depa. Adivinen quién abrió la puerta.",
+            "Estábamos en medio de la cena, la plática fluía bien, hasta que le trajeron su plato (unos tacos al pastor), el chico puso una cara extraña, se los quedó mirando y empezó a llorar a mares, yo no sabía qué hacer, pensé que se había quemado o algo pero después de un rato me dijo entre sollozos: 'A mi ex le encantaban los tacos al pastor...'. Pasó las siguientes dos horas enseñándome fotos de él en su celular y pidiéndome consejos sobre cómo recuperarlo",
         likes: 689,
     },
     {

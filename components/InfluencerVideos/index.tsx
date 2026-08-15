@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ButtonHTMLAttributes } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { influencers, type InfluencerClip } from "@/lib/data";
-import { easeOutSoft, fadeUp, stagger, viewportOnce } from "@/lib/motion";
+import { easeOutSoft, fadeUp, viewportOnce } from "@/lib/motion";
 
 const MOBILE_MQ = "(max-width: 767px)";
 
@@ -23,8 +23,8 @@ const useIsMobile = () => {
 };
 
 const Verified = () => (
-    <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden>
-        <circle cx="6" cy="6" r="6" fill="#3B82F6" />
+    <svg width="13" height="13" viewBox="0 0 12 12" aria-hidden>
+        <circle cx="6" cy="6" r="5.35" fill="#3B82F6" stroke="#121212" strokeWidth="1.3" />
         <path
             d="M3.4 6.15 5.1 7.8 8.6 4.3"
             fill="none"
@@ -37,8 +37,8 @@ const Verified = () => (
 );
 
 const PlayIcon = ({ paused }: { paused: boolean }) => (
-    <span className="flex size-10 items-center justify-center rounded-full bg-white/35 backdrop-blur-[2px]">
-        <svg width="16" height="16" viewBox="0 0 20 20" className="ml-0.5 fill-white">
+    <span className="flex size-11 items-center justify-center rounded-xl border-[3px] border-[#121212] bg-[#FCFCFC] shadow-[3px_3px_0_#121212]">
+        <svg width="16" height="16" viewBox="0 0 20 20" className="ml-0.5 fill-[#121212]">
             <path
                 d={
                     paused
@@ -48,6 +48,23 @@ const PlayIcon = ({ paused }: { paused: boolean }) => (
             />
         </svg>
     </span>
+);
+
+const BrutalButton = ({
+    children,
+    danger = false,
+    className = "",
+    ...props
+}: ButtonHTMLAttributes<HTMLButtonElement> & { danger?: boolean }) => (
+    <button
+        type="button"
+        className={`flex size-11 items-center justify-center rounded-xl border-[3px] border-[#121212] shadow-[3px_3px_0_#121212] transition-[transform,box-shadow] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_#121212] ${
+            danger ? "bg-[#E31B23] text-white" : "bg-[#FCFCFC] text-[#121212]"
+        } ${className}`}
+        {...props}
+    >
+        {children}
+    </button>
 );
 
 const Chevron = ({ dir }: { dir: "left" | "right" }) => (
@@ -102,11 +119,20 @@ const ClipCard = ({
 
     return (
         <motion.article
-            className="min-w-0 flex-1"
+            className="min-w-0 flex-1 transition-transform hover:-translate-y-0.5"
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewportOnce}
             variants={fadeUp}
             transition={{ duration: 0.45, ease: easeOutSoft }}
         >
-            <div className="relative aspect-[9/16] w-full overflow-hidden rounded-[1.15rem] bg-[#000C40]">
+            <div
+                className={`relative aspect-[9/16] w-full overflow-hidden rounded-[1.15rem] border-[3px] bg-[#000C40] transition-[border-color,box-shadow,transform] ${
+                    active
+                        ? "border-[#E31B23] shadow-[4px_4px_0_#E31B23]"
+                        : "border-[#121212] shadow-[4px_4px_0_#121212]"
+                }`}
+            >
                 <Image
                     src={clip.image}
                     alt={clip.handle}
@@ -150,12 +176,12 @@ const ClipCard = ({
                         )}
                     </AnimatePresence>
                 </button>
-                <span className="pointer-events-none absolute bottom-2 right-2 z-[3] text-[0.8125rem] font-semibold text-white drop-shadow">
+                <span className="pointer-events-none absolute right-2 bottom-2 z-[3] rounded-md border-[2.5px] border-[#121212] bg-[#FCFCFC] px-1.5 py-0.5 text-[0.75rem] leading-none font-bold text-[#121212] shadow-[2px_2px_0_#121212]">
                     {clip.duration}
                 </span>
             </div>
             <div className="mt-2 flex items-start gap-1.5">
-                <div className="relative mt-0.5 size-6 shrink-0 overflow-hidden rounded-full">
+                <div className="relative mt-0.5 size-6 shrink-0 overflow-hidden rounded-full border-[2.5px] border-[#121212] shadow-[2px_2px_0_#121212]">
                     <Image
                         src={clip.image}
                         alt=""
@@ -237,7 +263,7 @@ const MobileTheater = ({
     }, [paused, clip.id]);
 
     return (
-        <div className="fixed inset-0 z-50 bg-black">
+        <div className="fixed inset-0 z-50 bg-[#001789]">
             <AnimatePresence initial={false} custom={direction}>
                 <motion.div
                     key={clip.id}
@@ -250,7 +276,7 @@ const MobileTheater = ({
                 >
                     <video
                         ref={videoRef}
-                        className="h-full w-full bg-black object-contain"
+                        className="h-full w-full bg-[#001789] object-contain"
                         src={clip.video}
                         poster={clip.image}
                         playsInline
@@ -283,43 +309,41 @@ const MobileTheater = ({
             </button>
 
             {hasPrev && (
-                <button
-                    type="button"
+                <BrutalButton
                     onClick={onPrev}
-                    className="absolute top-1/2 left-[max(0.75rem,env(safe-area-inset-left))] z-[3] flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white backdrop-blur-sm"
+                    className="absolute top-1/2 left-[max(0.75rem,env(safe-area-inset-left))] z-[3] -translate-y-1/2"
                     aria-label="Video anterior"
                 >
                     <Chevron dir="left" />
-                </button>
+                </BrutalButton>
             )}
             {hasNext && (
-                <button
-                    type="button"
+                <BrutalButton
                     onClick={onNext}
-                    className="absolute top-1/2 right-[max(0.75rem,env(safe-area-inset-right))] z-[3] flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white backdrop-blur-sm"
+                    className="absolute top-1/2 right-[max(0.75rem,env(safe-area-inset-right))] z-[3] -translate-y-1/2"
                     aria-label="Video siguiente"
                 >
                     <Chevron dir="right" />
-                </button>
+                </BrutalButton>
             )}
 
-            <button
-                type="button"
+            <BrutalButton
+                danger
                 onClick={onClose}
-                className="absolute top-[max(1rem,env(safe-area-inset-top))] right-[max(1rem,env(safe-area-inset-right))] z-[4] flex size-11 items-center justify-center rounded-full bg-black/55 text-white backdrop-blur-sm"
+                className="absolute top-[max(1rem,env(safe-area-inset-top))] right-[max(1rem,env(safe-area-inset-right))] z-[4]"
                 aria-label="Cerrar video"
             >
                 <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden>
                     <path
                         d="M5 5l10 10M15 5 5 15"
                         stroke="currentColor"
-                        strokeWidth="1.8"
+                        strokeWidth="2.2"
                         strokeLinecap="round"
                     />
                 </svg>
-            </button>
+            </BrutalButton>
 
-            <div className="pointer-events-none absolute bottom-[max(1.25rem,env(safe-area-inset-bottom))] left-0 right-0 z-[3] flex items-center justify-center gap-1.5 px-4">
+            <div className="pointer-events-none absolute right-0 bottom-[max(1.25rem,env(safe-area-inset-bottom))] left-0 z-[3] flex items-center justify-center gap-1.5 px-4">
                 <p className="text-[0.9375rem] font-semibold text-white drop-shadow">
                     {clip.handle}
                 </p>
@@ -355,14 +379,8 @@ const InfluencerVideos = () => {
     };
 
     return (
-        <section className="mt-4">
-            <motion.div
-                className="flex gap-2.5"
-                initial="hidden"
-                whileInView="visible"
-                viewport={viewportOnce}
-                variants={stagger}
-            >
+        <section className="mt-4 pb-2">
+            <div className="flex gap-3">
                 {influencers.map((clip) => (
                     <ClipCard
                         key={clip.id}
@@ -374,7 +392,7 @@ const InfluencerVideos = () => {
                         onEnded={close}
                     />
                 ))}
-            </motion.div>
+            </div>
 
             <AnimatePresence>
                 {isMobile && playingId && playingIndex >= 0 && (

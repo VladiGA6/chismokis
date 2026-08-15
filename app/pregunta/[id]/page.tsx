@@ -16,7 +16,7 @@ export const generateMetadata = async ({ params }: Props): Promise<Metadata> => 
     if (!selected) return {};
 
     return {
-        title: `${selected.title} — Chismokis`,
+        title: `${selected.title} • Chismokis`,
         description:
             "Tres influencers ya mordieron. Tú puedes responder de forma anónima.",
     };

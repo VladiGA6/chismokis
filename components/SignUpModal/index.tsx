@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useState } from "react";
+import { useCallback, useEffect, useId, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
@@ -76,25 +76,25 @@ const CookieMark = () => (
     </svg>
 );
 
+const subscribe = () => () => undefined;
+
 const SignUpModal = ({ open, onClose, onComplete }: Props) => {
     const titleId = useId();
-    const [mounted, setMounted] = useState(false);
+    const mounted = useSyncExternalStore(subscribe, () => true, () => false);
     const [emailOpen, setEmailOpen] = useState(false);
     const [email, setEmail] = useState("");
 
-    useEffect(() => {
-        setMounted(true);
-    }, []);
+    const resetAndClose = useCallback(() => {
+        setEmailOpen(false);
+        setEmail("");
+        onClose();
+    }, [onClose]);
 
     useEffect(() => {
-        if (!open) {
-            setEmailOpen(false);
-            setEmail("");
-            return;
-        }
+        if (!open) return;
 
         const onKey = (event: KeyboardEvent) => {
-            if (event.key === "Escape") onClose();
+            if (event.key === "Escape") resetAndClose();
         };
 
         document.body.style.overflow = "hidden";
@@ -104,13 +104,13 @@ const SignUpModal = ({ open, onClose, onComplete }: Props) => {
             document.body.style.overflow = "";
             window.removeEventListener("keydown", onKey);
         };
-    }, [open, onClose]);
+    }, [open, resetAndClose]);
 
     if (!mounted) return null;
 
     const finish = (provider: Provider) => {
         onComplete?.(provider);
-        onClose();
+        resetAndClose();
     };
 
     return createPortal(
@@ -131,7 +131,7 @@ const SignUpModal = ({ open, onClose, onComplete }: Props) => {
                 type="button"
                 className="signup-backdrop"
                 aria-label="Cerrar registro"
-                onClick={onClose}
+                onClick={resetAndClose}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -146,15 +146,15 @@ const SignUpModal = ({ open, onClose, onComplete }: Props) => {
             >
                 <button
                     type="button"
-                    onClick={onClose}
-                    className="absolute right-3 top-3 flex size-9 items-center justify-center rounded-full text-[#7B7B7B] transition-colors hover:bg-[#F1F1F1] hover:text-[#121212]"
+                    onClick={resetAndClose}
+                    className="absolute top-3 right-3 flex size-9 items-center justify-center rounded-xl border-[3px] border-[#121212] bg-[#E31B23] text-white shadow-[2px_2px_0_#121212] transition-[transform,box-shadow] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_#121212]"
                     aria-label="Cerrar"
                 >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
                         <path
                             d="M5 5l14 14M19 5 5 19"
                             stroke="currentColor"
-                            strokeWidth="2"
+                            strokeWidth="2.4"
                             strokeLinecap="round"
                         />
                     </svg>
@@ -174,9 +174,9 @@ const SignUpModal = ({ open, onClose, onComplete }: Props) => {
                     enviarte la gift card si ganas.
                 </p>
 
-                <div className="mt-4 rounded-2xl border border-[#F0D7B4] bg-[#FFF4E8] px-3.5 py-3">
+                <div className="mt-4 rounded-2xl border-[3px] border-[#121212] bg-[#FFF4E8] px-3.5 py-3 shadow-[3px_3px_0_#121212]">
                     <div className="flex items-start gap-2.5">
-                        <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-white shadow-[0px_1px_0px_0px_rgba(255,255,255,0.8)_inset,0px_0px_0px_1px_#F0D7B4]">
+                        <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full border-[2.5px] border-[#121212] bg-[#FCFCFC] shadow-[2px_2px_0_#121212]">
                             <CookieMark />
                         </span>
                         <div>
@@ -197,7 +197,7 @@ const SignUpModal = ({ open, onClose, onComplete }: Props) => {
                     <button
                         type="button"
                         onClick={() => finish("google")}
-                        className="relative inline-flex h-12 items-center justify-center gap-2.5 rounded-xl bg-gradient-to-b from-[#E5E5E5] to-[#E2E2E2] px-5 text-[1rem] font-semibold text-[#121212] shadow-[0_3px_4px_-1px_rgba(0,0,0,0.15),0px_1px_0px_0px_rgba(255,255,255,0.33)_inset,0px_0px_0px_1px_#D4D4D4] transition-all hover:shadow-[0px_3px_8px_-2px_rgba(0,0,0,0.30),0px_1px_0px_0px_rgba(255,255,255,0.70)_inset,0px_0px_0px_1px_#E6E6E6]"
+                        className="relative inline-flex h-12 items-center justify-center gap-2.5 rounded-xl border-[3px] border-[#121212] bg-[#FCFCFC] px-5 text-[1rem] font-semibold text-[#121212] shadow-[3px_3px_0_#121212] transition-[transform,box-shadow] hover:-translate-x-px hover:-translate-y-px hover:shadow-[4px_4px_0_#121212] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_#121212]"
                     >
                         <GoogleMark />
                         Continuar con Google
@@ -205,7 +205,7 @@ const SignUpModal = ({ open, onClose, onComplete }: Props) => {
                     <button
                         type="button"
                         onClick={() => finish("facebook")}
-                        className="inline-flex h-12 items-center justify-center gap-2.5 rounded-xl bg-[#1877F2] px-5 text-[1rem] font-semibold text-white shadow-[0px_1px_0px_0px_rgba(255,255,255,0.22)_inset,0px_0px_0px_1px_#0F5FCC,0px_3px_4px_-1px_rgba(24,119,242,0.45)] transition-opacity hover:opacity-90"
+                        className="inline-flex h-12 items-center justify-center gap-2.5 rounded-xl border-[3px] border-[#121212] bg-[#1877F2] px-5 text-[1rem] font-semibold text-white shadow-[3px_3px_0_#121212] transition-[transform,box-shadow] hover:-translate-x-px hover:-translate-y-px hover:shadow-[4px_4px_0_#121212] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_#121212]"
                     >
                         <FacebookMark />
                         Continuar con Facebook
@@ -213,7 +213,7 @@ const SignUpModal = ({ open, onClose, onComplete }: Props) => {
                     <button
                         type="button"
                         onClick={() => setEmailOpen(true)}
-                        className="relative inline-flex h-12 items-center justify-center gap-2.5 rounded-xl bg-gradient-to-b from-[#1A2FA3] to-[#001789] px-5 text-[1rem] font-semibold text-[#FCFCFC] shadow-[0px_1px_0px_0px_rgba(255,255,255,0.22)_inset,0px_0px_0px_1px_#00125F,0px_3px_4px_-1px_rgba(0,23,137,0.55)] transition-opacity hover:opacity-90"
+                        className="relative inline-flex h-12 items-center justify-center gap-2.5 rounded-xl border-[3px] border-[#121212] bg-[#001789] px-5 text-[1rem] font-semibold text-[#FCFCFC] shadow-[3px_3px_0_#121212] transition-[transform,box-shadow] hover:-translate-x-px hover:-translate-y-px hover:shadow-[4px_4px_0_#121212] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_#121212]"
                     >
                         <MailMark />
                         Continuar con correo
@@ -245,12 +245,12 @@ const SignUpModal = ({ open, onClose, onComplete }: Props) => {
                             value={email}
                             onChange={(event) => setEmail(event.target.value)}
                             placeholder="tu@correo.com"
-                            className="h-12 w-full rounded-xl border border-[#E2E2E2] bg-[#F1F1F1] px-3.5 text-[1rem] text-[#121212] outline-none placeholder:text-[#7B7B7B] focus:border-[#001789] focus:bg-[#FCFCFC]"
+                            className="h-12 w-full rounded-xl border-[3px] border-[#121212] bg-[#F1F1F1] px-3.5 text-[1rem] text-[#121212] shadow-[3px_3px_0_#121212] outline-none placeholder:text-[#7B7B7B] focus:bg-[#FCFCFC]"
                         />
                         <button
                             type="submit"
                             disabled={email.trim().length === 0}
-                            className="mt-2 inline-flex h-12 w-full items-center justify-center rounded-xl bg-[#E31B23] text-[1rem] font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-40"
+                            className="mt-2.5 inline-flex h-12 w-full items-center justify-center rounded-xl border-[3px] border-[#121212] bg-[#E31B23] text-[1rem] font-semibold text-white shadow-[3px_3px_0_#121212] transition-[transform,box-shadow] hover:-translate-x-px hover:-translate-y-px hover:shadow-[4px_4px_0_#121212] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_#121212] disabled:translate-x-0 disabled:translate-y-0 disabled:opacity-40 disabled:shadow-[3px_3px_0_#121212]"
                         >
                             Crear cuenta
                         </button>
@@ -263,7 +263,7 @@ const SignUpModal = ({ open, onClose, onComplete }: Props) => {
                     <Link
                         href="/terminos"
                         className="font-semibold text-[#001789] underline-offset-2 hover:underline"
-                        onClick={onClose}
+                        onClick={resetAndClose}
                     >
                         términos
                     </Link>{" "}
@@ -271,7 +271,7 @@ const SignUpModal = ({ open, onClose, onComplete }: Props) => {
                     <Link
                         href="/privacidad"
                         className="font-semibold text-[#001789] underline-offset-2 hover:underline"
-                        onClick={onClose}
+                        onClick={resetAndClose}
                     >
                         privacidad
                     </Link>

@@ -1,14 +1,16 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import CommentMessage from "@/components/CommentMessage";
 import CommentComposer from "@/components/CommentComposer";
-import type { CommentItem } from "@/lib/data";
+import { getAdjacentQuestions, type CommentItem } from "@/lib/data";
 import { easeOutSoft, fadeUp, viewportOnce } from "@/lib/motion";
 
 type Props = {
     comments: CommentItem[];
+    questionId: string;
     onSubmit: (content: string) => void;
     onReply: (parentId: string, content: string) => void;
 };
@@ -16,7 +18,10 @@ type Props = {
 const countThread = (items: CommentItem[]): number =>
     items.reduce((sum, item) => sum + 1 + countThread(item.replies ?? []), 0);
 
-const CommentThread = ({ comments, onSubmit, onReply }: Props) => {
+const pagerClass =
+    "inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl border-[3px] border-[#121212] bg-[#FCFCFC] px-4 text-[0.9375rem] font-semibold text-[#121212] shadow-[3px_3px_0_#121212] transition-[transform,box-shadow] hover:-translate-x-px hover:-translate-y-px hover:shadow-[4px_4px_0_#121212] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_#121212]";
+
+const CommentThread = ({ comments, questionId, onSubmit, onReply }: Props) => {
     const sectionRef = useRef<HTMLElement>(null);
     const [sticky, setSticky] = useState(false);
 
@@ -52,8 +57,19 @@ const CommentThread = ({ comments, onSubmit, onReply }: Props) => {
         return () => {
             sectionObserver.disconnect();
             footerObserver?.disconnect();
+            delete document.documentElement.dataset.stickyComment;
         };
     }, []);
+
+    useEffect(() => {
+        if (sticky) {
+            document.documentElement.dataset.stickyComment = "";
+            return;
+        }
+        delete document.documentElement.dataset.stickyComment;
+    }, [sticky]);
+
+    const { prev, next } = getAdjacentQuestions(questionId);
 
     return (
         <motion.section
@@ -85,6 +101,26 @@ const CommentThread = ({ comments, onSubmit, onReply }: Props) => {
                     ))}
                 </AnimatePresence>
             </div>
+
+            {(prev || next) && (
+                <nav
+                    aria-label="Otras preguntas"
+                    className="mt-6 flex gap-3"
+                >
+                    {prev && (
+                        <Link href={`/pregunta/${prev.id}`} className={pagerClass}>
+                            <span aria-hidden>←</span>
+                            Anterior
+                        </Link>
+                    )}
+                    {next && (
+                        <Link href={`/pregunta/${next.id}`} className={pagerClass}>
+                            Siguiente
+                            <span aria-hidden>→</span>
+                        </Link>
+                    )}
+                </nav>
+            )}
 
             <div className="h-[8.5rem]" aria-hidden />
 

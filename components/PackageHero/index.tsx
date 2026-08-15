@@ -31,7 +31,7 @@ const PackageHero = () => {
                 >
                     <Image
                         src="/assets/chulisimo.webp"
-                        alt="Persona sosteniendo un paquete de Chismokis"
+                        alt="Persona sosteniendo un paquete de Chokis"
                         width={1344}
                         height={752}
                         priority

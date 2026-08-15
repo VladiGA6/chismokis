@@ -159,7 +159,7 @@ const PassCard = ({ interactive = true }: Props) => {
                                 <div className="mb-4 h-px w-[72%] bg-white/80" />
                                 <div className="rounded-2xl bg-white p-3">
                                     <QrMark
-                                        payload={passCard.question}
+                                        value={passCard.qrUrl}
                                         size={168}
                                     />
                                 </div>

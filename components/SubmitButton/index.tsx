@@ -13,17 +13,17 @@ const SubmitButton = ({ className, active, disabled, isMedium }: Props) => (
     <motion.button
         type="submit"
         whileTap={disabled ? undefined : { scale: 0.92 }}
-        className={`group relative flex justify-center items-center cursor-pointer before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-b before:from-[#E5E5E5] before:to-[#E2E2E2] before:shadow-[0px_3px_4px_-1px_rgba(0,0,0,0.15),0px_1px_0px_0px_rgba(255,255,255,0.33)_inset,0px_0px_0px_1px_#D4D4D4] before:transition-all after:absolute after:inset-0 after:rounded-xl after:bg-gradient-to-b after:from-[#1A2FA3] after:to-[#001789] after:shadow-[0px_0.5px_1px_0px_rgba(255,255,255,0.18)_inset,0px_2px_4px_-1px_rgba(0,23,137,0.50),0px_0px_0px_1px_#00125F] after:opacity-0 after:transition-all hover:after:opacity-100 ${
-            active ? "after:opacity-100 hover:after:!opacity-90" : ""
-        } ${isMedium ? "size-8 rounded-[0.625rem]" : "size-10 rounded-xl"} ${
-            disabled ? "opacity-40 pointer-events-none" : ""
+        className={`relative flex cursor-pointer items-center justify-center border-[2.5px] border-[#121212] shadow-[2px_2px_0_#121212] transition-[transform,box-shadow,background-color,color] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_#121212] ${
+            active
+                ? "bg-[#001789] text-[#FCFCFC]"
+                : "bg-[#FCFCFC] text-[#121212]"
+        } ${isMedium ? "size-8 rounded-lg" : "size-10 rounded-xl"} ${
+            disabled ? "pointer-events-none opacity-40" : ""
         } ${className || ""}`}
         aria-label="Publicar"
     >
         <svg
-            className={`relative z-2 size-4 transition-colors ${
-                active ? "fill-[#FCFCFC]" : ""
-            } group-hover:fill-[#FCFCFC]`}
+            className="relative size-4 fill-current"
             width={16}
             height={16}
             viewBox="0 0 16 16"
