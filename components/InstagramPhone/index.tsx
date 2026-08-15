@@ -75,6 +75,7 @@ const posts: InstagramPost[] = [
 
 const InstagramPhone = () => {
     const [openPostId, setOpenPostId] = useState<number | null>(null);
+    const [activePostId, setActivePostId] = useState<number | null>(null);
     const feedRef = useRef<HTMLDivElement>(null);
     const postRefs = useRef<Record<number, HTMLElement | null>>({});
 
@@ -87,6 +88,59 @@ const InstagramPhone = () => {
             target.getBoundingClientRect().top -
             container.getBoundingClientRect().top +
             container.scrollTop;
+        setActivePostId(openPostId);
+    }, [openPostId]);
+
+    useEffect(() => {
+        if (openPostId == null) {
+            setActivePostId(null);
+            return;
+        }
+
+        const root = feedRef.current;
+        if (!root) return;
+
+        const ratios = new Map<number, number>();
+
+        const pickActive = () => {
+            let bestId = openPostId;
+            let bestRatio = -1;
+            for (const [id, ratio] of ratios) {
+                if (ratio > bestRatio) {
+                    bestRatio = ratio;
+                    bestId = id;
+                }
+            }
+            if (bestRatio >= 0.45) {
+                setActivePostId(bestId);
+            }
+        };
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                for (const entry of entries) {
+                    const id = Number(
+                        (entry.target as HTMLElement).dataset.postId,
+                    );
+                    if (!Number.isFinite(id)) continue;
+                    ratios.set(id, entry.isIntersecting ? entry.intersectionRatio : 0);
+                }
+                pickActive();
+            },
+            {
+                root,
+                threshold: [0, 0.25, 0.45, 0.6, 0.75, 1],
+            },
+        );
+
+        for (const post of posts) {
+            const node = postRefs.current[post.id];
+            if (!node) continue;
+            node.dataset.postId = String(post.id);
+            observer.observe(node);
+        }
+
+        return () => observer.disconnect();
     }, [openPostId]);
 
     return (
@@ -174,7 +228,7 @@ const InstagramPhone = () => {
                                         >
                                             <PostDetail
                                                 post={post}
-                                                active={openPostId === post.id}
+                                                active={activePostId === post.id}
                                                 onBack={() => setOpenPostId(null)}
                                             />
                                         </article>
@@ -436,6 +490,7 @@ const PostMedia = ({
 
         if (!autoPlay) {
             video.pause();
+            video.currentTime = 0;
             return;
         }
 
@@ -458,7 +513,7 @@ const PostMedia = ({
                 loop
                 playsInline
                 autoPlay={autoPlay}
-                preload={autoPlay ? "auto" : "metadata"}
+                preload="auto"
                 onLoadedData={(event) => {
                     if (!autoPlay) {
                         event.currentTarget.currentTime = 0.01;
