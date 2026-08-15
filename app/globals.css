@@ -1,0 +1,204 @@
+@import "tailwindcss";
+
+@theme {
+    --color-navy: #001789;
+    --color-navy-deep: #000f52;
+    --color-navy-card: #00125f;
+    --color-navy-input: #000c40;
+    --color-red: #e31b23;
+    --color-red-hot: #ff2a33;
+    --color-blue-btn: #2f4fd0;
+    --font-display: Georgia, "Iowan Old Style", "Palatino Linotype", Palatino,
+        serif;
+    --font-ui: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+    text-size-adjust: 100%;
+}
+
+body {
+    background: #001789;
+    color: #ffffff;
+    font-family: var(--font-ui);
+}
+
+::selection {
+    background: #e31b23;
+    color: #ffffff;
+}
+
+
+.question-hero-title {
+    position: relative;
+    overflow: visible;
+    color: #fff;
+    text-align: center;
+    text-transform: uppercase;
+    font-family: var(--font-passion), sans-serif;
+    font-size: 4rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 0.92;
+}
+
+.question-hero-title-shadow,
+.question-hero-title-fill {
+    display: block;
+}
+
+.question-hero-title-shadow {
+    position: absolute;
+    inset: 0;
+    color: #2b4db6;
+    -webkit-text-stroke: 14px #2b4db6;
+    transform: translate(-16px, 6px);
+    pointer-events: none;
+    user-select: none;
+}
+
+.question-hero-title-fill {
+    position: relative;
+    color: #fff;
+    -webkit-text-stroke: 14px #2b4db6;
+    paint-order: stroke fill;
+}
+
+.question-hero-title.is-pack {
+    font-size: clamp(2.3rem, 7vw, 4.2rem);
+}
+
+.question-hero-title.is-pack .question-hero-title-shadow {
+    -webkit-text-stroke: 12px #2b4db6;
+    transform: translate(-12px, 5px);
+}
+
+.question-hero-title.is-pack .question-hero-title-fill {
+    -webkit-text-stroke: 12px #2b4db6;
+}
+
+.question-hero-title.is-card {
+    font-size: 1.85rem;
+}
+
+.question-hero-title.is-reveal {
+    font-size: clamp(1.85rem, 2.8vw, 1.75rem);
+}
+
+.question-hero-title.is-reveal .question-hero-title-shadow {
+    -webkit-text-stroke: 5px #2b4db6;
+    transform: translate(-5px, 2px);
+}
+
+.question-hero-title.is-reveal .question-hero-title-fill {
+    -webkit-text-stroke: 5px #2b4db6;
+}
+
+.question-hero-title.is-card .question-hero-title-shadow {
+    -webkit-text-stroke: 7px #2b4db6;
+    transform: translate(-7px, 3px);
+}
+
+.question-hero-title.is-card .question-hero-title-fill {
+    -webkit-text-stroke: 7px #2b4db6;
+}
+
+.question-hero-title.is-nav {
+    font-size: clamp(2.5rem, 9vw, 4.5rem);
+}
+
+.question-hero-title.is-nav .question-hero-title-shadow {
+    -webkit-text-stroke: 10px #2b4db6;
+    transform: translate(-10px, 4px);
+}
+
+.question-hero-title.is-nav .question-hero-title-fill {
+    -webkit-text-stroke: 10px #2b4db6;
+}
+
+.nav-item {
+    overflow: hidden;
+    height: calc(clamp(2.5rem, 9vw, 4.5rem) * 0.92 + 18px);
+}
+
+.nav-hit {
+    display: block;
+    overflow: hidden;
+    height: 100%;
+}
+
+.nav-hit-static {
+    cursor: default;
+}
+
+.nav-track {
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.48s cubic-bezier(0.22, 0.8, 0.28, 1);
+}
+
+.nav-line {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: calc(clamp(2.5rem, 9vw, 4.5rem) * 0.92 + 18px);
+    padding: 0 16px;
+}
+
+.nav-hit:hover .nav-track,
+.nav-hit:focus-visible .nav-track {
+    transform: translateY(-50%);
+}
+
+.menu-root {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+}
+
+.menu-panel {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    background: #001789;
+}
+
+.signup-root {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem;
+}
+
+.signup-backdrop {
+    position: absolute;
+    inset: 0;
+    border: 0;
+    background: rgba(0, 12, 64, 0.62);
+    backdrop-filter: blur(8px);
+}
+
+.signup-card {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 23rem;
+    padding: 1.75rem 1.25rem 1.25rem;
+    border: 1px solid #ececec;
+    border-radius: 1.5rem;
+    background: #fcfcfc;
+    box-shadow:
+        0px 18px 24px -20px rgba(0, 0, 0, 0.13),
+        0px 2px 0px 0px #fff inset,
+        0px 18px 40px -16px rgba(0, 0, 0, 0.28);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .nav-track {
+        transition: none;
+    }
+}
