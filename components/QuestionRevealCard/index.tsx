@@ -6,17 +6,18 @@ import { motion } from "framer-motion";
 import { passionOne } from "@/app/fonts";
 
 type Props = {
+    id: string;
     title: string;
 };
 
-const QuestionRevealCard = ({ title }: Props) => (
+const QuestionRevealCard = ({ id, title }: Props) => (
     <motion.div
         whileHover={{ y: -6 }}
         whileTap={{ scale: 0.98 }}
         transition={{ type: "spring", stiffness: 380, damping: 26 }}
     >
         <Link
-            href="/pregunta"
+            href={`/pregunta/${id}`}
             className="group relative block aspect-square w-full overflow-hidden rounded-[1.15rem] bg-[#001789] outline-none focus-visible:ring-2 focus-visible:ring-white/40"
             style={{
                 boxShadow:

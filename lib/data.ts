@@ -96,6 +96,11 @@ export const archiveQuestions: ArchiveQuestion[] = [
     },
 ];
 
+export const getQuestionById = (id: string) =>
+    archiveQuestions.find((item) => item.id === id);
+
+export const defaultQuestion = archiveQuestions[0];
+
 export const passCard = {
     tag: question.tag,
     prompt: "Responde:",

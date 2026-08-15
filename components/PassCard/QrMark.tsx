@@ -99,7 +99,7 @@ const QrMark = ({ payload, size = 196 }: Props) => {
             height={size}
             viewBox={`0 0 ${view} ${view}`}
             shapeRendering="crispEdges"
-            aria-label="Código QR del pase"
+            aria-label="Código QR de la tarjeta"
         >
             <rect width={view} height={view} fill="#FFFFFF" />
             <path d={modules.join("")} fill="#001789" />

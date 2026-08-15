@@ -49,7 +49,7 @@ const PackageHero = () => {
                     whileHover={{ scale: 1.03, rotate: 0 }}
                     whileTap={{ scale: 0.98 }}
                 >
-                    <Link href="/pregunta">
+                    <Link href="/pregunta/peor-cita">
                         <span className="relative block rounded-[1.6rem] border-[3px] border-[#121212] bg-[#FCFCFC] px-3.5 py-3 text-left text-[#121212] shadow-[5px_5px_0_#121212]">
                             <span className="flex flex-wrap items-center gap-x-1 text-[0.8125rem] leading-snug font-semibold">
                                 <span>El</span>

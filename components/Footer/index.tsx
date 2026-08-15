@@ -13,6 +13,7 @@ const links = [
 const Footer = () => {
     return (
         <motion.footer
+            id="site-footer"
             className="mt-auto border-t border-white/10"
             initial="hidden"
             whileInView="visible"

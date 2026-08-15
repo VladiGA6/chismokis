@@ -2,10 +2,13 @@
 
 import { motion } from "framer-motion";
 import { passionOne } from "@/app/fonts";
-import { question } from "@/lib/data";
 import { easeOutSoft, fadeUp } from "@/lib/motion";
 
-const QuestionHero = () => {
+type Props = {
+    title: string;
+};
+
+const QuestionHero = ({ title }: Props) => {
     return (
         <motion.section
             className="px-1 pt-5 text-center"
@@ -23,9 +26,9 @@ const QuestionHero = () => {
             >
                 <h1 className={`${passionOne.className} question-hero-title`}>
                     <span className="question-hero-title-shadow" aria-hidden>
-                        {question.title}
+                        {title}
                     </span>
-                    <span className="question-hero-title-fill">{question.title}</span>
+                    <span className="question-hero-title-fill">{title}</span>
                 </h1>
             </motion.div>
 

@@ -37,7 +37,7 @@ const QuestionMasonry = () => {
                         variants={fadeUp}
                         transition={{ duration: 0.45, ease: easeOutSoft }}
                     >
-                        <QuestionRevealCard title={item.title} />
+                        <QuestionRevealCard id={item.id} title={item.title} />
                     </motion.div>
                 ))}
             </motion.div>

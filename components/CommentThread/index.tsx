@@ -21,16 +21,38 @@ const CommentThread = ({ comments, onSubmit, onReply }: Props) => {
     const [sticky, setSticky] = useState(false);
 
     useEffect(() => {
-        const node = sectionRef.current;
-        if (!node) return;
+        const section = sectionRef.current;
+        const footer = document.getElementById("site-footer");
+        if (!section) return;
 
-        const observer = new IntersectionObserver(
-            ([entry]) => setSticky(entry.isIntersecting),
+        let sectionVisible = false;
+        let footerVisible = false;
+        const sync = () => setSticky(sectionVisible && !footerVisible);
+
+        const sectionObserver = new IntersectionObserver(
+            ([entry]) => {
+                sectionVisible = entry.isIntersecting;
+                sync();
+            },
             { threshold: 0 },
         );
+        sectionObserver.observe(section);
 
-        observer.observe(node);
-        return () => observer.disconnect();
+        const footerObserver = footer
+            ? new IntersectionObserver(
+                  ([entry]) => {
+                      footerVisible = entry.isIntersecting;
+                      sync();
+                  },
+                  { threshold: 0 },
+              )
+            : null;
+        if (footer) footerObserver?.observe(footer);
+
+        return () => {
+            sectionObserver.disconnect();
+            footerObserver?.disconnect();
+        };
     }, []);
 
     return (
