@@ -6,14 +6,16 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import FullMenu from "@/components/FullMenu";
 
-const Header = () => {
+const Header = ({ sticky = true }: { sticky?: boolean }) => {
     const [menuOpen, setMenuOpen] = useState(false);
 
     return (
         <>
             <header
                 id="site-header"
-                className="sticky top-0 z-40 -mx-4 flex items-center justify-center bg-[#001789] px-4 pt-5 pb-2"
+                className={`flex items-center justify-center bg-[#001789] pt-5 pb-2 ${
+                    sticky ? "sticky top-0 z-40 -mx-4 px-4" : "relative"
+                }`}
             >
                 <motion.button
                     type="button"

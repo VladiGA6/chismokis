@@ -10,7 +10,7 @@ const InstagramPage = () => {
     return (
         <div className="flex min-h-screen flex-col bg-[#001789]">
             <div className="mx-auto flex w-full max-w-[1100px] flex-1 flex-col px-4 pb-10">
-                <Header />
+                <Header sticky={false} />
                 <main className="flex flex-1 flex-col items-center justify-center py-8">
                     <InstagramPhone />
                     <motion.p
@@ -19,7 +19,7 @@ const InstagramPage = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.4, delay: 0.28, ease: easeOutSoft }}
                     >
-                        Perfil de Instagram - chokis_mx
+                        Presionar en los posts para ver los creativos ampliados. • chokis_mx
                     </motion.p>
                 </main>
             </div>
