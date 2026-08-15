@@ -7,7 +7,7 @@ import PrizeSection from "@/components/PrizeSection";
 const HomePage = () => {
     return (
         <div className="relative flex min-h-screen flex-col bg-[#001789]">
-            <div className="absolute inset-x-0 top-0 z-40 mx-auto w-full max-w-[1100px] px-4">
+            <div className="sticky top-0 z-40 mx-auto w-full max-w-[1100px] px-4">
                 <Header />
             </div>
             <PackageHero />

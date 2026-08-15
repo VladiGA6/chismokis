@@ -3,23 +3,17 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import FullMenu from "@/components/FullMenu";
 
 const Header = () => {
     const [menuOpen, setMenuOpen] = useState(false);
-    const overlay = usePathname() === "/";
 
     return (
         <>
             <header
                 id="site-header"
-                className={`relative flex items-center justify-center pt-5 pb-2 ${
-                    overlay
-                        ? ""
-                        : "sticky top-0 z-40 -mx-4 bg-[#001789] px-4"
-                }`}
+                className="sticky top-0 z-40 -mx-4 flex items-center justify-center bg-[#001789] px-4 pt-5 pb-2"
             >
                 <motion.button
                     type="button"
